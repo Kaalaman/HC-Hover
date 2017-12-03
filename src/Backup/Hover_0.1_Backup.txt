@@ -1,0 +1,162 @@
+#include <Arduino.h>
+
+/*-----( Import needed libraries )-----*/
+#include <SPI.h>
+#include "RF24.h"
+#include "printf.h"
+#include <LiquidCrystal.h>
+
+#include <Servo.h>
+
+/*-----( Declare Constants and Pin Numbers )-----*/
+//None yet
+
+/*-----( Declare objects )-----*/
+
+LiquidCrystal lcd(8, 7, 6, 5, 4, 3);
+RF24 myRadio (48, 53); // "myRadio" is the identifier you will use in following methods
+Servo TestServo;
+
+/*-----( Declare Variables )-----*/
+byte addresses[][6] = {"1Node"}; // Create address for 1 pipe.
+int ZaehlerSpeicher = 0;
+int ZaehlerVerloren = 0;
+int Zwischenspeicher = 0;
+
+
+unsigned long Rechner = 0;
+
+struct dataStruct {
+  //unsigned long _micros;  // to save response times
+  int Xposition;          // The Joystick position values
+  int Yposition;
+  bool switchOn;          // The Joystick push-down switch
+  int zaehler;
+} myData;
+
+void setup()   /****** SETUP: RUNS ONCE ******/
+{
+  // Use the serial Monitor (Symbol on far right). Set speed to 115200 (Bottom Right)
+  Serial.begin(115200);
+  delay(0);
+  Serial.println(F("RF24/Simple Receive data Test"));
+  Serial.println(F("Questions: terry@yourduino.com"));
+
+  TestServo.attach(11);
+
+  lcd.clear();
+  lcd.begin(20, 4);
+  lcd.setCursor(0, 0);
+  lcd.print("Nr.: ");  //11
+  lcd.setCursor (0,1);
+  lcd.print("  X= ");  //3
+  lcd.setCursor (0,2);
+  lcd.print("  Y= ");  //3
+  lcd.setCursor (0,3);
+  lcd.print("Bt.: ");  //3
+  lcd.setCursor (11,2);
+  lcd.print("PL:");
+
+
+
+  myRadio.begin();  // Start up the physical nRF24L01 Radio
+  myRadio.setChannel(108);  // Above most Wifi Channels
+  myRadio.setPALevel(RF24_PA_HIGH);
+  myRadio.openReadingPipe(1, addresses[0]);
+  myRadio.setDataRate(RF24_1MBPS);
+  //myRadio.setCRCLength(RF24_CRC_8);
+  myRadio.startListening();
+
+  ZaehlerVerloren = 0;
+  ZaehlerSpeicher = 0;
+  Zwischenspeicher =0;
+
+
+  delay(1000);
+
+  ZaehlerSpeicher = myData.zaehler;
+}//--(end setup )---
+
+
+void loop()   /****** LOOP: RUNS CONSTANTLY ******/
+{
+
+  myRadio.stopListening();
+
+
+
+
+  myRadio.startListening();
+
+  unsigned long started_waiting_at = micros();
+  boolean timeout = false;
+
+  if ( myRadio.available()) // Check for incoming data from transmitter
+    {
+      while (myRadio.available())  // While there is data ready
+        {
+
+
+
+
+    
+    Serial.print("Data received = "); Serial.print(myData.zaehler);
+    lcd.setCursor(4, 0); lcd.print(myData.zaehler); lcd.print("    ");
+
+    Serial.print(F(" X=")); Serial.print(myData.Xposition);
+    lcd.setCursor (4,1); lcd.print(myData.Xposition); lcd.print(" ");
+
+    Serial.print(F(" Y=")); Serial.print(myData.Yposition);
+    lcd.setCursor (4,2); lcd.print(myData.Yposition); lcd.print(" ");
+
+
+    if ( myData.switchOn == 1){
+      Serial.print(F(" Switch ON"));
+      lcd.setCursor (4,3); lcd.print("On "); lcd.print(" ");
+      ZaehlerVerloren = 0;}
+    else{
+      Serial.print(F(" Switch OFF"));
+      lcd.setCursor (4,3); lcd.print("Off"); lcd.print(" ");
+    }
+
+
+      //if (myData.zaehler-ZaehlerSpeicher > 1) {
+        ZaehlerVerloren = myData.zaehler -ZaehlerSpeicher;
+      //}
+
+
+      lcd.setCursor (15,2);
+      lcd.print("     ");
+      lcd.setCursor (14,2);
+      lcd.print(ZaehlerVerloren);
+
+      if (ZaehlerVerloren > 5) {
+        lcd.setCursor(12 , 0);
+        lcd.print("Achtung");
+        }
+      else {
+        lcd.setCursor(12, 0);
+        lcd.print("       ");
+        }
+
+      Serial.print(" - ");
+      Serial.print(ZaehlerVerloren);
+
+      TestServo.write(map(myData.Xposition, 1023,0,0,180));
+
+    ZaehlerSpeicher = myData.zaehler;
+
+    Serial.print(F("\n"));
+
+    }
+
+
+  } //END Radio available
+
+
+}//--(end main loop )---
+
+/*-----( Declare User-written Functions )-----*/
+
+//None yet
+//*********( THE END )***********
