@@ -219,9 +219,9 @@ void loop()
   SteuerServo.write(StellungSteuerServo);
 
   //Inaktiv wegen Rundenzeit
-  // lcd.setCursor(4, 1); lcd.print(StellungSteuerServo); lcd.print("   ");
-  // lcd.setCursor(4, 2); lcd.print(LeistungMotorAuftrieb); lcd.print("   ");
-  // lcd.setCursor(4, 3); lcd.print(LeistungMotorSchub); lcd.print("   ");
+  lcd.setCursor(4, 1); lcd.print(StellungSteuerServo); lcd.print("   ");
+  lcd.setCursor(4, 2); lcd.print(LeistungMotorAuftrieb); lcd.print("   ");
+  lcd.setCursor(4, 3); lcd.print(LeistungMotorSchub); lcd.print("   ");
 
   // hcInfo.BatU1 = random(30, 1023);
   // hcInfo.BatU2 = random(30, 1023);
