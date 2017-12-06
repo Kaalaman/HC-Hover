@@ -60,9 +60,9 @@ byte StellungSteuerServo;
 //volatile byte buf [2];
 //
 struct infoStruct {
-  int BatU1;
-  int BatU2;
-  int BatU3;
+  int BatU;
+  //int Strom Motor 1;
+  //int Strom Motor 2;
 } hcInfo;
 
 
@@ -224,35 +224,16 @@ void loop()
   lcd.setCursor(4, 3); lcd.print(LeistungMotorSchub); lcd.print("   ");
 
 
-  // hcInfo.BatU1 = random(30, 1023);
-  // hcInfo.BatU2 = random(30, 1023);
-  // hcInfo.BatU3 = random(30, 1023);
-
-  //hcInfo.BatU1 = 300; //Nur zu Testzwecken
-  hcInfo.BatU2 = 600;
-  hcInfo.BatU3 = 900;
-
   //Spannung an Batterie auslesen
-
   if (millis() - timerBatterie > 500) {
 
-    hcInfo.BatU1 = analogRead(BATTERIE_1);
-    //hcInfo.BatU2 = analogRead(BATTERIE_2);
-    //hcInfo.BatU3 = analogRead(BATTERIE_3);
-
+    hcInfo.BatU = random(30, 1023);
 
     Serial.print("Batterie: ");
-    Serial.print(hcInfo.BatU1);
-    Serial.print(F(" - "));
-    Serial.print(hcInfo.BatU2);
-    Serial.print(F(" - "));
-    Serial.print(hcInfo.BatU3);
+    Serial.print(hcInfo.BatU);
     Serial.print(F(" - "));
 
     timerBatterie = millis();
   }
 
 }//Ende Loop
-
-//zum testen ob die Verbindung mit GitHub funktioniert
-////noch einmal ein test
