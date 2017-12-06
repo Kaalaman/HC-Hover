@@ -223,6 +223,7 @@ void loop()
   lcd.setCursor(4, 2); lcd.print(LeistungMotorAuftrieb); lcd.print("   ");
   lcd.setCursor(4, 3); lcd.print(LeistungMotorSchub); lcd.print("   ");
 
+
   // hcInfo.BatU1 = random(30, 1023);
   // hcInfo.BatU2 = random(30, 1023);
   // hcInfo.BatU3 = random(30, 1023);
