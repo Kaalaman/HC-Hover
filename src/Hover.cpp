@@ -227,7 +227,7 @@ void loop()
   //Spannung an Batterie auslesen
   if (millis() - timerBatterie > 500) {
 
-    hcInfo.BatU = random(30, 1023);
+    hcInfo.BatU = random(820, 1023);
 
     Serial.print("Batterie: ");
     Serial.print(hcInfo.BatU);
